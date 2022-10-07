@@ -15,32 +15,33 @@ Creates Grafana Notification Channels for each Team/Service and outputs their UI
 
 ```hcl
 module "pagerduty_grafana_config" {
-    source = "github.com/dapperlabs-platform/terraform-pagerduty-grafana-config.git?ref=vX.Y.Z"
-    teams = {
-        "SRE" = {
-        parent_name = "Product Team"
-        manager = "manager@company.com"
-        escalation_policy = {
-            num_loops                   = 2
-            escalation_delay_in_minutes = 10
+  source = "github.com/dapperlabs-platform/terraform-pagerduty-config.git?ref=vX.Y.Z"
+  teams = {
+    "SRE" = {
+      parent_name = "Product Team"
+      manager     = "manager@company.com"
+      escalation_policy = {
+        num_loops                   = 2
+        escalation_delay_in_minutes = 10
+      }
+      services = {
+        "Infrastructure" = {
+          auto_resolve_timeout    = 14400
+          acknowledgement_timeout = 600
+          alert_creation          = "create_alerts_and_incidents"
         }
-        services = {
-            "Infrastructure" = {
-                auto_resolve_timeout    = 14400
-                acknowledgement_timeout = 600
-                alert_creation          = "create_alerts_and_incidents"
-            }
-            "CI/CD Runners" = {
-                auto_resolve_timeout    = 14400
-                acknowledgement_timeout = 600
-                alert_creation          = "create_alerts_and_incidents"
-            }
+        "CI/CD Runners" = {
+          auto_resolve_timeout    = 14400
+          acknowledgement_timeout = 600
+          alert_creation          = "create_alerts_and_incidents"
         }
-        responders = [
-            "alice@company.com",
-            "bob@company.com"
-        ]
+      }
+      responders = [
+        "alice@company.com",
+        "bob@company.com"
+      ]
     }
+  }
 }
 ```
 
