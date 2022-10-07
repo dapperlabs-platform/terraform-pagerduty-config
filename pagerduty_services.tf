@@ -29,13 +29,6 @@ resource "pagerduty_service" "services" {
   auto_resolve_timeout    = try(each.value.service.config.auto_resolve_timeout, 14400)
   acknowledgement_timeout = try(each.value.service.config.acknowledgement_timeout, 600)
   alert_creation          = try(each.value.service.config.alert_creation, "create_alerts_and_incidents")
-
-  lifecycle {
-    ignore_changes = [
-      last_incident_timestamp,
-      status
-    ]
-  }
 }
 
 resource "pagerduty_service_integration" "integrations" {
