@@ -41,6 +41,14 @@ resource "pagerduty_team_membership" "responders" {
   role    = "responder"
 }
 
+resource "pagerduty_team_membership" "managers" {
+  for_each = var.teams
+
+  user_id = data.pagerduty_user.users[each.value.manager].id
+  team_id = pagerduty_team.teams[each.key].id
+  role    = "manager"
+}
+
 # https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs/resources/schedule
 # Default schedule that is ignored by terraform after creation to allow managers to 
 # modify it using the PagerDuty UI
@@ -89,6 +97,10 @@ resource "pagerduty_escalation_policy" "escalation_policies" {
       type = "schedule_reference"
       id   = pagerduty_schedule.schedules[each.value].id
     }
+  }
+
+  rule {
+    escalation_delay_in_minutes = try(var.teams[each.value].escalation_policy.escalation_delay_in_minutes, 10)
 
     target {
       type = "user_reference"
